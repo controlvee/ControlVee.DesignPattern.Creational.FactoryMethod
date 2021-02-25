@@ -31,190 +31,114 @@
     /// </summary>
     class Program
     {
-        public static void Main()
+        static void Main()
         {
-            VehicleBuilder builder;
+            // Note: Ctors call Factory Method!
+            Document[] docs = new Document[2];
 
-            // Create shop with vehicle builders.
-            Shop shop = new Shop();
+            docs[0] = new Resume();
+            docs[1] = new Report();
 
-            // Construct and display vehicles.
-            builder = new ScooterBuilder();
-            shop.Construct(builder);
-            builder.Vehicle.Show();
+            // Display pages.
+            foreach (Document doc in docs)
+            {
+                Console.WriteLine($"\n{ doc.GetType().Name } includes --");
+                foreach (Page page in doc.Pages)
+                {
+                    Console.WriteLine($"\t{ page.GetType().Name }");
+                }
+            }
 
-            builder = new CarBuilder();
-            shop.Construct(builder);
-            builder.Vehicle.Show();
-
-            builder = new MotorCycleBuilder();
-            shop.Construct(builder);
-            builder.Vehicle.Show();
-
-            // Wait for user.
+            // Wait.
             Console.ReadKey();
         }
     }
 
     /// <summary>
-    /// The 'Director' class
+    /// Products - abstract and concrete.
     /// </summary>
-    class Shop
+    abstract class Page
     {
-        // Builder uses a complex series of steps.
-        public void Construct(VehicleBuilder vehicleBuilder)
+    }
+
+    class SkillsPage : Page 
+    { 
+    }
+
+    class EducationPage : Page 
+    { 
+    }
+
+    class ExperiencePage : Page
+    {
+    }
+
+    class IntroductionPage : Page
+    {
+    }
+
+    class ResultsPage : Page
+    {
+    }
+
+    class ConclusionPage : Page
+    {
+    }
+
+    class SummaryPage : Page
+    {
+    }
+
+    class BibliographyPage : Page
+    {
+    }
+    
+    /// <summary>
+    /// The Creator class.
+    /// </summary>
+    abstract class Document
+    {
+        private List<Page> _pages = new List<Page>();
+
+        public List<Page> Pages
         {
-            vehicleBuilder.BuildFrame();
-            vehicleBuilder.BuildEngine();
-            vehicleBuilder.BuildWheels();
-            vehicleBuilder.BuildDoors();
+            get { return _pages; }
+        }
+
+        // The ctr calls the abstract Factory method.
+        public Document()
+        {
+            // What is the purpose of this method
+            // in the ctor?
+            this.CreatePages();
+        }
+
+        // Why doesn't this have an empty body {}?
+        // Why is this needed? Why not just create a method 
+        // in the derived class?  Is it for enforcement?
+        public abstract void CreatePages();
+    }
+
+    class Resume : Document
+    {
+        public override void CreatePages()
+        {
+            base.Pages.Add(new SkillsPage());
+            base.Pages.Add(new EducationPage());
+            base.Pages.Add(new ExperiencePage());
         }
     }
 
-    /// <summary>
-    /// The 'Builder' abstract class
-    /// </summary>
-    abstract class VehicleBuilder
+    class Report : Document
     {
-        protected Vehicle vehicle;
-
-        // Gets vehicle instance
-        public Vehicle Vehicle
+        // Factory Method implementation.
+        public override void CreatePages()
         {
-            get { return vehicle; }
-        }
-
-        // Abstract build methods.
-        public abstract void BuildFrame();
-        public abstract void BuildEngine();
-        public abstract void BuildWheels();
-        public abstract void BuildDoors();
-    }
-
-    /// <summary>
-    /// The 'ConcreteBuilder1' class
-    /// </summary>
-    class MotorCycleBuilder : VehicleBuilder
-    {
-        public MotorCycleBuilder()
-        {
-            vehicle = new Vehicle("MotorCycle");
-        }
-
-        public override void BuildFrame()
-        {
-            // TODO: What is happening here?
-            vehicle["frame"] = "MotorCycle Frame";
-        }
-
-        public override void BuildEngine()
-        {
-            vehicle["engine"] = "500 cc";
-        }
-
-        public override void BuildWheels()
-        {
-            vehicle["wheels"] = "2";
-        }
-
-        public override void BuildDoors()
-        {
-            vehicle["doors"] = "0";
-        }
-    }
-
-
-    /// <summary>
-    /// The 'ConcreteBuilder2' class
-    /// </summary>
-    class CarBuilder : VehicleBuilder
-    {
-        public CarBuilder()
-        {
-            vehicle = new Vehicle("Car");
-        }
-
-        public override void BuildFrame()
-        {
-            vehicle["frame"] = "Car Frame";
-        }
-
-        public override void BuildEngine()
-        {
-            vehicle["engine"] = "2500 cc";
-        }
-
-        public override void BuildWheels()
-        {
-            vehicle["wheels"] = "4";
-        }
-
-        public override void BuildDoors()
-        {
-            vehicle["doors"] = "4";
-        }
-    }
-
-    /// <summary>
-    /// The 'ConcreteBuilder3' class
-    /// </summary>
-
-    class ScooterBuilder : VehicleBuilder
-    {
-        public ScooterBuilder()
-        {
-            vehicle = new Vehicle("Scooter");
-        }
-
-        public override void BuildFrame()
-        {
-            vehicle["frame"] = "Scooter Frame";
-        }
-
-        public override void BuildEngine()
-        {
-            vehicle["engine"] = "50 cc";
-        }
-
-        public override void BuildWheels()
-        {
-            vehicle["wheels"] = "2";
-        }
-
-        public override void BuildDoors()
-        {
-            vehicle["doors"] = "0";
-        }
-    }
-
-    /// <summary>
-    /// The 'Product' class
-    /// </summary>
-    class Vehicle
-    {
-        private string _vehicleType;
-        private Dictionary<string, string> _parts = new Dictionary<string, string>();
-
-        public Vehicle(string vehicleType)
-        {
-            this._vehicleType = vehicleType;
-        }
-
-        // Indexer.
-        public string this[string key]
-        {
-            get { return _parts[key]; }
-            set { _parts[key] = value; }
-        }
-
-        public void Show()
-        {
-            Console.WriteLine("\n---------------------------");
-            Console.WriteLine("Vehicle Type: {0}", _vehicleType);
-            Console.WriteLine(" Frame : {0}", _parts["frame"]);
-            Console.WriteLine(" Engine : {0}", _parts["engine"]);
-            Console.WriteLine(" #Wheels: {0}", _parts["wheels"]);
-            Console.WriteLine(" #Doors : {0}", _parts["doors"]);
+            Pages.Add(new IntroductionPage());
+            Pages.Add(new ResultsPage());
+            Pages.Add(new ConclusionPage());
+            Pages.Add(new SummaryPage());
+            Pages.Add(new BibliographyPage());
         }
     }
 }
